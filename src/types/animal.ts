@@ -1,10 +1,11 @@
 export type Animal = {
     id: number;
     name: string;
+    shdescription: string;
     description: string;
     age: number;
-    race: string;
-    specie: string;
+    sexo: string
+    status: string;
+    priority: string;
     isAdopted: boolean;
-    isAcogido: boolean;
 }

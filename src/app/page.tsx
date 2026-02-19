@@ -1,43 +1,26 @@
 "use client";
 
-import Summary from "../components/ui/Summary";
 import React from "react";
 import {useRouter} from "next/navigation";
-import AnimalCarousel from "../components/ui/AnimalCarousel";
-import AnimalCard from "../components/ui/AnimalCard";
+import Hero from "./hero/page"
+import SobreNosotrosPage from "./nosotros/page"
+import ContactPage from "./contact/page"
+import Donaciones from "./donaciones/page"
+import CatsSummary from "./cats/Summary/page"
 
 export default function Home() {
     const router = useRouter();
     
     return (
         <div>
+            <Hero/>
             <main className="flex min-h-1/2 flex-col items-right justify-between p-24 bg-[#F6F1FB]">
-                <Summary
-                    title="NOSOTROS"
-                    description="Resumen sobre la asociación"
-                    rout="/admin/dashboard"
-                >
-                </Summary>
-                
+                <CatsSummary/>
                 <div className="border-b border-gray-300 mb-6"></div>
-
-                <Summary
-                    title="ANIMALES"
-                    description="Algunos animales"
-                    rout="/admin/animales"
-                >
-                    <div className="flex overflow-y-visible overflow-x-hidden gap-6 mt-10">
-                        <AnimalCarousel/>
-                    </div>
-                </Summary>
-
+                <SobreNosotrosPage/>
                 <div className="border-b border-gray-300 mb-6"></div>
-
-                <Summary
-                    title="CONTACTO"
-                    description="Contacto:"
-                    rout="/admin/dashboard"
-                ></Summary>
+                <Donaciones />
+                <ContactPage/>
             </main>
         </div>
     );

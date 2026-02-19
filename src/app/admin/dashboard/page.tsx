@@ -1,6 +1,6 @@
 "use client";
-import AnimalCard from "@/components/ui/AnimalCard";
-import ProtectedRoute from "@/context/protectedRoute";
+import CatCard from "@/components/ui/AnimalCard";
+//import ProtectedRoute from "@/context/protectedRoute";
 import { Animal } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { ComponentProps, useEffect, useState } from "react";
@@ -25,7 +25,7 @@ const AdminDashboardPage = ({ ...rest }: Props) => {
   const goToNewAnimal = () => router.push("/admin/animal");
     const goToEditAnimal = (id: number) => router.push(`/admin/animal?id=${id}`);
   return (
-    <ProtectedRoute>
+    //<ProtectedRoute>
       <div
         className="flex min-h-screen flex-col items-center bg-gray-50 p-6"
         {...rest}
@@ -47,7 +47,7 @@ const AdminDashboardPage = ({ ...rest }: Props) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-5xl">
         {animals.map((animal) => (
           <div key={animal.id}>
-            <AnimalCard
+            <CatCard
               name={animal.name}
               description={animal.description}
               isDisponible={animal.isAdopted}
@@ -64,7 +64,7 @@ const AdminDashboardPage = ({ ...rest }: Props) => {
         ))}
       </div>
       </div>
-    </ProtectedRoute>
+    //</ProtectedRoute>
   );
 };
 
