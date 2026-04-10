@@ -1,5 +1,5 @@
 "use client";
-import CatCard from "@/components/ui/AnimalCard";
+import {CatCard} from "@/components/ui/AnimalCard";
 //import ProtectedRoute from "@/context/protectedRoute";
 import { Animal } from "@prisma/client";
 import { useRouter } from "next/navigation";

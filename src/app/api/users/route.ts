@@ -1,32 +1,22 @@
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
-
-export async function GET() {
-  const users = await prisma.user.findMany();
-  return Response.json(users);
-}
-
 export async function POST(req: Request) {
-  const { username, password } = await req.json();
+  const { username, password } = await req.json()
 
-  if (!username || !password) {
-    return new Response(JSON.stringify({ error: "Username and password required" }), { status: 400 });
+  const envUser = process.env.ADMIN_USERNAME
+  const envPass = process.env.ADMIN_PASSWORD
+
+  if (!envUser || !envPass) {
+    return new Response(JSON.stringify({ error: "Missing env config" }), { status: 500 })
   }
 
-  const user = await prisma.user.findUnique({
-    where: { user: username },
-  });
-
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
+  if (username !== envUser || password !== envPass) {
+    return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 })
   }
 
-  
-  const validPassword = await bcrypt.compare(password, user.psw)
-
-  if (!validPassword) {
-    return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
-  }
-
-  return new Response(JSON.stringify({ message: "Login successful", user: { id: user.id, user: user.user } }), { status: 200 });
+  return new Response(
+    JSON.stringify({
+      message: "Login successful",
+      user: { id: 1, user: envUser },
+    }),
+    { status: 200 }
+  )
 }
