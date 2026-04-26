@@ -1,15 +1,10 @@
 "use client";
 
-import React, {ComponentProps} from "react";
+import React from "react";
 import Bar from "../ui/Bar";
 import { FaFacebook } from "react-icons/fa";
 import { TiSocialInstagram } from "react-icons/ti";
-import {Facebook, Heart} from "lucide-react";
-type Props = ComponentProps<"footer"> &{
-    
-    
-};
-
+import {Heart} from "lucide-react";
 
 const Footer = () => {
     return (

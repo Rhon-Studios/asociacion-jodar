@@ -4,7 +4,7 @@ import React, { ComponentProps } from "react";
 import styled from "styled-components";
 
 type Props = ComponentProps<"div"> & { children?: React.ReactNode };
-const Bar = ({children, ...rest}: Props) => {
+const Bar = ({children}: Props) => {
     return (
         <StyledWrapper>
             <div className="button-container">
@@ -23,7 +23,7 @@ const StyledWrapper = styled.div`
         align-items: center;
         justify-content: space-around;
         border-radius: 10px;
-        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 10px,
+        box-shadow: rgba(0, 0, 0, 0.35) 0 5px 10px,
         rgba(128, 91, 166, 0.5) 5px 10px 15px;
         padding: 5px;
         gap: 8px;

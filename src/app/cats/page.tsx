@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ComponentProps, useState, useEffect } from "react";
+import React, { ComponentProps, useState } from "react";
 import { CatCard } from "@/components/ui/Cards";
 import {cats} from "@/database/catDB";
 import { motion } from "motion/react";
@@ -22,8 +22,8 @@ const CatsPage= ({ ...rest}: Props) => {
             if (selectedAgeRange === "adulto" && (cat.years <= 3 || cat.years > 7)) return false;
             if (selectedAgeRange === "senior" && cat.years <= 7) return false;
         }
-        if (selectedPriority !== "todos" && cat.priority !== selectedPriority) return false;
-        return true;
+        return !(selectedPriority !== "todos" && cat.priority !== selectedPriority);
+        
     });
     
     return (

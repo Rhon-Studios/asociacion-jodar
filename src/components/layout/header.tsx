@@ -1,24 +1,18 @@
 "use client";
 
-import React, { ComponentProps } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import {Cat, Home, Search} from "lucide-react";
+import {Cat, Home} from "lucide-react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-
-type Props = ComponentProps<"header"> &{
-
-};
-
-const Header= ({ ...rest}: Props) => {
+const Header= () => {
     const router = useRouter();
     const pathname = usePathname();
 
     const isActive = (path: string) => {
         if (path === "/" && pathname === "/") return true;
-        if (path !== "/" && pathname.startsWith(path)) return true;
-        return false;
+        return path !== "/" && pathname.startsWith(path);
     };
 
     const Links = [

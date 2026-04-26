@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useUser } from "@/context/userContext"
 
 import { motion } from "motion/react";
-import {Heart, User, Lock } from "lucide-react";
+import { User, Lock } from "lucide-react";
 import Image from "next/image";
 
 
@@ -81,13 +81,13 @@ const Login = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <User className="h-5 w-5 text-[#805BA6]" />
+                                    <User className="h-5 w-5 text-[#805BA6]"/>
                                 </div>
                                 <input 
                                     id="username" 
-                                    type="text" 
-                                    value={username}
-                                    value={username} onChange={(e) => setUsername(e.target.value)}
+                                    type="username" 
+                                    value={username} 
+                                    onChange={(e) => setUsername(e.target.value)}
                                     className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#805BA6] focus:border-transparent transition-all text-gray-800"
                                     placeholder="Ingresa tu usuario" 
                                     required
@@ -105,8 +105,8 @@ const Login = () => {
                                 <input
                                     id="password"
                                     type="password"
-                                    value={password}
-                                    value={password} onChange={(e) => setPassword(e.target.value)}
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#805BA6] focus:border-transparent transition-all text-gray-800"
                                     placeholder="Ingresa tu contraseña"
                                     required

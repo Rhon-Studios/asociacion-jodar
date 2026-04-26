@@ -5,7 +5,8 @@ import type { Cat } from "@/database/catDB";
 import { cats } from "@/database/catDB";
 import {useRouter, useSearchParams} from "next/navigation";
 import { motion } from "motion/react";
-import {ArrowLeft, Save, Upload} from "lucide-react";
+import { Save, Upload } from "lucide-react";
+import Image from "next/image";
 
 type Props = ComponentProps<"div"> & {
     onSaved?: () => void;
@@ -205,12 +206,15 @@ const EditAnimal = ({ onSaved, ...rest }: Props) => {
                                         animate={{ opacity: 1 }}
                                         className="mt-4 relative rounded-2xl overflow-hidden h-64 shadow-lg"
                                     >
-                                        <img
-                                            src={imageUrl}
-                                            alt="Preview"
-                                            className="w-full h-full object-cover"
-                                            onError={() => setImageUrl("")}
-                                        />
+                                        <div className="relative h-64 rounded-2xl overflow-hidden">
+                                            <Image
+                                                src={imageUrl}
+                                                alt="Preview"
+                                                fill
+                                                className="object-cover"
+                                                onError={() => setImageUrl("")}
+                                            />
+                                        </div>
                                     </motion.div>
                                 )}
                                 <div className="flex flex-col items-center bg-[#F6F1FB] rounded-2xl p-6 border-2 border-dashed border-[#805BA6]">
@@ -283,7 +287,12 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         </div>
     );
 }
-function Input({ label, helperText, ...props }: any) {
+
+type InputProps = {
+    label: string;
+    helperText?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>;
+function Input({ label, helperText, ...props }: InputProps) {
     return (
         <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -299,7 +308,11 @@ function Input({ label, helperText, ...props }: any) {
         </div>
     );
 }
-function TextArea({ label, ...props }: any) {
+
+type TextAreaProps = {
+    label: string;
+} & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+function TextArea({ label, ...props }: TextAreaProps) {
     return (
         <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -312,7 +325,16 @@ function TextArea({ label, ...props }: any) {
         </div>
     );
 }
-function Select({ label, options, ...props }: any) {
+
+type Option = {
+    value: string;
+    label: string;
+};
+type SelectProps = {
+    label: string;
+    options: Option[];
+} & React.SelectHTMLAttributes<HTMLSelectElement>;
+function Select({ label, options, ...props }: SelectProps) {
     return (
         <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -322,7 +344,7 @@ function Select({ label, options, ...props }: any) {
                 {...props}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#805BA6] focus:border-transparent transition-all text-gray-800"
             >
-                {options.map((opt: any) => (
+                {options.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                         {opt.label}
                     </option>
