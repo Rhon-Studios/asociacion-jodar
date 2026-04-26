@@ -1,15 +1,12 @@
 "use client";
 
-import React, { ComponentProps, useState } from "react";
+import React, { useState } from "react";
 import { CatCard } from "@/components/ui/Cards";
 import {cats} from "@/database/catDB";
 import { motion } from "motion/react";
 import {FilterSelect} from "@/components/ui/FilterSelect";
 
-type Props = ComponentProps<"div"> &{
-  
-};
-const CatsPage= ({ ...rest}: Props) => {
+const CatsPage= () => {
     const [selectedSex, setSelectedSex] = useState<string>("todos");
     const [selectedAgeRange, setSelectedAgeRange] = useState<string>("todos");
     const [selectedPriority, setSelectedPriority] = useState<string>("todos");
