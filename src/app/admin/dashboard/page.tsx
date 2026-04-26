@@ -13,7 +13,7 @@ const AdminDashboardPage = () => {
     const router = useRouter();
     const goToNewAnimal = () => router.push("/admin/animal");
     const [searchTerm, setSearchTerm] = useState("");
-    const [allCats, setAllCats] = useState<Cat[]>(cats);
+    const [allCats] = useState<Cat[]>(cats);
     const filteredCats = allCats.filter(cat =>
         cat.name.toLowerCase().includes(searchTerm.toLowerCase())
     );

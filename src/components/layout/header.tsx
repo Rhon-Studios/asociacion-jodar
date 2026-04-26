@@ -53,7 +53,7 @@ const Header= () => {
                     </h1>
                 </button>
                 <nav className="flex gap-2">
-                    {Links.map((link, index) => (
+                    {Links.map((link) => (
                         <motion.button
                             onClick={() => {router.push(link.route)}}
                             key={link.label}
