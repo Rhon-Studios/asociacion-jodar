@@ -2,7 +2,7 @@
 CREATE TABLE "Animal" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "shdescription" TEXT NOT NULL,
+    "shortDescription" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "years" INTEGER NOT NULL,
     "months" INTEGER NOT NULL,
