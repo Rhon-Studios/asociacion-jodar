@@ -8,9 +8,10 @@ import { motion } from "motion/react";
 import { Save, Upload } from "lucide-react";
 import Image from "next/image";
 
-type Props = ComponentProps<"div"> & {
+type Props = {
     onSaved?: () => void;
 };
+const EditAnimal = () => {
 
 type AnimalForm = Omit<Cat, "id"> & { id?: number };
 
@@ -275,8 +276,6 @@ const EditAnimal = ({ onSaved, ...rest }: Props) => {
     )
 }
 
-export default EditAnimal;
-
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className="space-y-4">
@@ -352,4 +351,4 @@ function Select({ label, options, ...props }: SelectProps) {
             </select>
         </div>
     );
-}
+}}
