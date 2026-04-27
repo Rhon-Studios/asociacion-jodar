@@ -1,6 +1,6 @@
 "use client"
 
-import {ComponentProps, useState} from "react";
+import {useState} from "react";
 import {useRouter} from "next/navigation";
 import type { Cat } from "@/database/catDB";
 import { cats } from "@/database/catDB";
@@ -9,15 +9,11 @@ import {LogOut, Plus, Search} from "lucide-react";
 import {AdminCatCard, AdminStatCard} from "@/components/ui/Cards";
 
 
-type Props = ComponentProps<"div"> & {
-    
-};
-
-const AdminDashboardPage = ({ ...rest }: Props) => {
+const AdminDashboardPage = () => {
     const router = useRouter();
     const goToNewAnimal = () => router.push("/admin/animal");
     const [searchTerm, setSearchTerm] = useState("");
-    const [allCats, setAllCats] = useState<Cat[]>(cats);
+    const [allCats] = useState<Cat[]>(cats);
     const filteredCats = allCats.filter(cat =>
         cat.name.toLowerCase().includes(searchTerm.toLowerCase())
     );

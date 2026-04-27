@@ -25,26 +25,28 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const { name, description, age, race, specie, isAdopted, isAcogido, images } =
-    await req.json()
+  const { name, shortDescription, description, years, months, sex, status, priority, isAdopted, images } = await req.json()
+  // images es un array de URLs: ["url1", "url2"]
+    const animal = await prisma.animal.create({
+        data: {
+            name,
+            shortDescription, 
+            description, 
+            years: Number(years),
+            months: Number(months),
+            sex, 
+            status, 
+            priority,
+            isAdopted, 
+            images: {
+                create: images.map((url: string) => ({ url }))
+            }
+            }, 
+        include: {
+            images: true
+        }
+    })
+    
+    return Response.json(animal)
 
-  // const animal = await prisma.animal.create({
-  //   data: {
-  //     name,
-  //     description,
-  //     age: Number(age),
-  //     race,
-  //     specie,
-  //     isAdopted,
-  //     isAcogido,
-  //     images: {
-  //       create: images.map((url: string) => ({ url })),
-  //     },
-  //   },
-  //   include: {
-  //     images: true,
-  //   },
-  // })
-
-  return Response.json(animal)
 }

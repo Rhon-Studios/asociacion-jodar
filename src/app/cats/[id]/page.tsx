@@ -1,18 +1,15 @@
 "use client"
 
-import React, {ComponentProps} from "react";
+import React from "react";
 import Image from "next/image";
 import {useParams} from "next/navigation";
 import { cats } from "@/database/catDB";
 import { motion } from "motion/react";
 import {Calendar, CheckCircle2, Home, XCircle} from "lucide-react";
 import {ProcessStepCard} from "@/components/ui/Cards";
+import Link from "next/link";
 
-type Props = ComponentProps<"div"> &{
-
-};
-
-const CatPage= ({ ...rest}: Props) => {
+const CatPage= () => {
     const { id } = useParams();
     const cat = cats.find(c => c.id === Number(id));
     if (!cat) {
@@ -22,12 +19,12 @@ const CatPage= ({ ...rest}: Props) => {
                     <h2 className="text-4xl font-bold mb-4 text-gray-800">
                         Gato no encontrado
                     </h2>
-                    <a
+                    <Link
                         href="/cats"
                         className="inline-block bg-[#805BA6] hover:bg-[#6A4A8A] text-white px-6 py-3 rounded-lg transition-all hover:scale-105 shadow-lg font-semibold"
                     >
-                        Volver a la lista
-                    </a>
+                        ← Volver a la lista
+                    </Link>
                 </div>
             </div>
         )
@@ -53,13 +50,13 @@ const CatPage= ({ ...rest}: Props) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                 >
-                    <a
+                    <Link 
                         href="/cats"
                         className="inline-flex items-center gap-2 text-[#805BA6] hover:text-[#6A4A8A] mb-8 font-medium"
                         style={{ fontWeight: 700 }}
                     >
                         ← Volver a la lista
-                    </a>
+                    </Link>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
