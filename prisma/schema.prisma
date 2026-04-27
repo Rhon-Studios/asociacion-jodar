@@ -10,12 +10,14 @@ datasource db {
 model Animal {
     id Int @id @default(autoincrement())
     name String
+    shortDescription String
     description String
-    age Int
-    race String
-    specie String
+    years Int
+    months Int
+    sex String
+    status String
+    priority String
     isAdopted Boolean
-    isAcogido Boolean
     images    ImagesAnimal[]
 }
 
