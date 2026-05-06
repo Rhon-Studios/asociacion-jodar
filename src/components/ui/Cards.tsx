@@ -26,7 +26,7 @@ export function CatCard({ cat }: { cat: Cat }) {
             >
                 <div className="relative h-64 overflow-hidden">
                     <Image
-                        src={cat.images[0]}
+                        src={cat?.images?.[0]?.url ?? ""}
                         alt={cat.name}
                         fill
                         className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
@@ -81,7 +81,7 @@ export function AdminCatCard({ cat, onEdit }: { cat: Cat; onEdit: () => void }) 
         <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all">
             <div className="relative h-48">
                 <Image
-                    src={cat.images[0]}
+                    src={cat?.images?.[0]?.url ?? ""}
                     alt={cat.name}
                     fill
                     className="object-cover"
