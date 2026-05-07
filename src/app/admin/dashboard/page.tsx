@@ -1,23 +1,47 @@
-"use client"
+"use client";
 
-import {useState} from "react";
-import {useRouter} from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Cat } from "@/database/catDB";
-import { cats } from "@/database/catDB";
 import { motion } from "motion/react";
-import {LogOut, Plus, Search} from "lucide-react";
-import {AdminCatCard, AdminStatCard} from "@/components/ui/Cards";
+import { LogOut, Plus, Search } from "lucide-react";
+import { AdminCatCard, AdminStatCard } from "@/components/ui/Cards";
 
+type AirtableCat = Cat & {
+    airtableId: string;
+};
 
 const AdminDashboardPage = () => {
     const router = useRouter();
     const goToNewAnimal = () => router.push("/admin/animal");
+
     const [searchTerm, setSearchTerm] = useState("");
-    const [allCats] = useState<Cat[]>(cats);
+    const [allCats, setAllCats] = useState<AirtableCat[]>([]);
+
+    const fetchCats = async () => {
+        const res = await fetch("http://localhost:3000/api/cats");
+        const data = await res.json();
+
+        if (!data?.records) return;
+
+        const formattedCats = data.records.map(
+            (cat: { id: string; fields: Cat }) => ({
+                ...cat.fields,
+                airtableId: cat.id,
+            })
+        );
+
+        setAllCats(formattedCats);
+    };
+
+    useEffect(() => {
+        fetchCats();
+    }, []);
+
     const filteredCats = allCats.filter(cat =>
         cat.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    
+
     return (
         <div className="min-h-screen bg-[#F6F1FB] py-8 px-6">
             <div className="max-w-7xl mx-auto">
@@ -29,9 +53,15 @@ const AdminDashboardPage = () => {
                 >
                     <div className="flex justify-between items-center mb-6">
                         <div>
-                            <h1 className="text-5xl font-bold text-gray-800 mb-2">Dashboard Administrativo</h1>
-                            <p className="text-gray-600 text-lg">Gestiona los gatos en adopción</p>
+                            <h1 className="text-5xl font-bold text-gray-800 mb-2">
+                                Dashboard Administrativo
+                            </h1>
+
+                            <p className="text-gray-600 text-lg">
+                                Gestiona los gatos en adopción
+                            </p>
                         </div>
+
                         <motion.a
                             href="/"
                             whileHover={{ scale: 1.05 }}
@@ -42,31 +72,37 @@ const AdminDashboardPage = () => {
                             Salir
                         </motion.a>
                     </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                         <AdminStatCard
                             label="Total de Gatos"
                             value={allCats.length}
                             color="bg-gradient-to-br from-[#805BA6] to-[#6A4A8A]"
                         />
+
                         <AdminStatCard
                             label="Disponibles"
                             value={allCats.filter(c => !c.isAdopted).length}
                             color="bg-gradient-to-br from-emerald-500 to-emerald-600"
                         />
+
                         <AdminStatCard
                             label="Urgentes"
                             value={allCats.filter(c => c.priority === "urgente").length}
                             color="bg-gradient-to-br from-red-500 to-red-600"
                         />
+
                         <AdminStatCard
                             label="Adopciones Totales"
                             value={allCats.filter(c => c.isAdopted).length}
                             color="bg-gradient-to-br from-blue-500 to-blue-600"
                         />
                     </div>
+
                     <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative flex-1 w-full">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
                             <input
                                 type="text"
                                 value={searchTerm}
@@ -75,6 +111,7 @@ const AdminDashboardPage = () => {
                                 className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#805BA6] focus:border-transparent text-gray-800"
                             />
                         </div>
+
                         <motion.button
                             onClick={goToNewAnimal}
                             whileHover={{ scale: 1.05 }}
@@ -86,29 +123,35 @@ const AdminDashboardPage = () => {
                         </motion.button>
                     </div>
                 </motion.div>
+
                 {filteredCats.length === 0 ? (
                     <div className="text-center py-20">
-                        <p className="text-2xl text-gray-600">No se encontraron gatos</p>
+                        <p className="text-2xl text-gray-600">
+                            No se encontraron gatos
+                        </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredCats.map((cat, index) => (
                             <motion.div
-                                key={cat.id}
+                                key={cat.airtableId}
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05, duration: 0.6 }}
                             >
-                                <AdminCatCard 
+                                <AdminCatCard
                                     cat={cat}
-                                    onEdit={() => router.push(`/admin/animal?id=${cat.id}`)}
+                                    onEdit={() =>
+                                        router.push(`/admin/animal?id=${cat.airtableId}`)
+                                    }
                                 />
                             </motion.div>
                         ))}
                     </div>
-                )} 
+                )}
             </div>
         </div>
-    )
-}
+    );
+};
+
 export default AdminDashboardPage;

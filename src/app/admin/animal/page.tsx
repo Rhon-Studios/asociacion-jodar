@@ -1,24 +1,21 @@
 "use client";
 
-import React, { useEffect, useState, Suspense} from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import type { Cat } from "@/database/catDB";
-import { cats } from "@/database/catDB";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import { Save, Upload } from "lucide-react";
 import Image from "next/image";
 
-
-type AnimalForm = Omit<Cat, "id"> & { id?: number };
-
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD!;
-const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET!;
+type AnimalForm = Omit<Cat, "id">;
 
 const EditAnimal = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
+
     const id = searchParams.get("id");
     const isNew = !id;
+
     const [form, setForm] = useState<AnimalForm>({
         name: "",
         shortDescription: "",
@@ -30,46 +27,80 @@ const EditAnimal = () => {
         priority: "normal",
         images: [],
         isAdopted: false,
-
     });
+
     const [imageUrl, setImageUrl] = useState("");
     const [isSaving, setIsSaving] = useState(false);
+
+    const fetchCat = async () => {
+        const res = await fetch(`http://localhost:3000/api/cats?id=${id}`);
+        const data = await res.json();
+
+        if (!data?.fields) return;
+
+        setForm(data.fields);
+
+        if (data.fields.images?.[0]?.url) {
+            setImageUrl(data.fields.images[0].url);
+        }
+    };
+
     useEffect(() => {
         if (!isNew && id) {
-            const cat = cats.find(c => c.id === Number(id));
-            if (cat) {
-                setForm(cat)
-                setImageUrl(cat.images[0] || "");
-            }
+            fetchCat();
         }
     }, [id, isNew]);
+
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const { name, value, type } = e.target;
+
         if (type === "checkbox") {
             const checked = (e.target as HTMLInputElement).checked;
-            setForm(prev => ({ ...prev, [name]: checked }));
+
+            setForm(prev => ({
+                ...prev,
+                [name]: checked,
+            }));
         } else if (type === "number") {
-            setForm(prev => ({ ...prev, [name]: Number(value) }));
+            setForm(prev => ({
+                ...prev,
+                [name]: Number(value),
+            }));
         } else {
-            setForm(prev => ({ ...prev, [name]: value }));
+            setForm(prev => ({
+                ...prev,
+                [name]: value,
+            }));
         }
     };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         setIsSaving(true);
+
         const updatedForm = {
             ...form,
-            images: imageUrl ? [imageUrl] : form.images
+            images: imageUrl ? [{ url: imageUrl }] : [],
         };
-        setTimeout(() => {
-            console.log("Saving cat:", updatedForm);
-            setIsSaving(false);
+
+        const res = await fetch("http://localhost:3000/api/cats", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedForm),
+        });
+
+        setIsSaving(false);
+
+        if (res.ok) {
             router.push("/admin/dashboard");
-        }, 1000);
+        }
     };
-    
+
     return (
         <div className="min-h-screen bg-[#F6F1FB] py-8 px-6">
             <div className="max-w-4xl mx-auto">
@@ -85,15 +116,20 @@ const EditAnimal = () => {
                     >
                         ← Volver al dashboard
                     </a>
+
                     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
                         <div className="bg-gradient-to-r from-[#805BA6] to-[#6A4A8A] px-8 py-6">
                             <h2 className="text-3xl font-bold text-white">
                                 {isNew ? "Añadir Nuevo Gato" : "Editar Gato"}
                             </h2>
+
                             <p className="text-[#E9E1F3] mt-2">
-                                {isNew ? "Añade un nuevo gato al sistema" : "Actualiza la información del gato"}
+                                {isNew
+                                    ? "Añade un nuevo gato al sistema"
+                                    : "Actualiza la información del gato"}
                             </p>
                         </div>
+
                         <form onSubmit={handleSubmit} className="p-8 space-y-8">
                             <Section title="Información Básica">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -105,6 +141,7 @@ const EditAnimal = () => {
                                         placeholder="Ej: Luna, Simón, Mimi"
                                         required
                                     />
+
                                     <div className="flex gap-6">
                                         <Input
                                             label="Años"
@@ -115,6 +152,7 @@ const EditAnimal = () => {
                                             min={0}
                                             required
                                         />
+
                                         <Input
                                             label="Meses"
                                             name="months"
@@ -126,6 +164,7 @@ const EditAnimal = () => {
                                         />
                                     </div>
                                 </div>
+
                                 <Input
                                     label="Descripción Corta"
                                     name="shortDescription"
@@ -136,6 +175,7 @@ const EditAnimal = () => {
                                     required
                                     helperText={`${form.shortDescription.length}/100 caracteres`}
                                 />
+
                                 <TextArea
                                     label="Descripción Completa"
                                     name="description"
@@ -146,6 +186,7 @@ const EditAnimal = () => {
                                     required
                                 />
                             </Section>
+
                             <Section title="Características">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <Select
@@ -158,6 +199,7 @@ const EditAnimal = () => {
                                             { value: "hembra", label: "Hembra" }
                                         ]}
                                     />
+
                                     <Select
                                         label="Estado"
                                         name="status"
@@ -170,6 +212,7 @@ const EditAnimal = () => {
                                         ]}
                                     />
                                 </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <Select
                                         label="Prioridad"
@@ -182,6 +225,7 @@ const EditAnimal = () => {
                                             { value: "urgente", label: "🔴 Urgente" }
                                         ]}
                                     />
+
                                     {!isNew && (
                                         <div className="flex items-center gap-3 pt-8">
                                             <label className="relative inline-flex items-center cursor-pointer">
@@ -192,13 +236,18 @@ const EditAnimal = () => {
                                                     onChange={handleChange}
                                                     className="sr-only peer"
                                                 />
-                                                <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#805BA6]/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#805BA6]"></div>
-                                                <span className="ms-3 text-sm font-semibold text-gray-700">Adoptado</span>
+
+                                                <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#805BA6]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-[#805BA6] after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border after:rounded-full after:h-6 after:w-6 after:transition-all"></div>
+
+                                                <span className="ms-3 text-sm font-semibold text-gray-700">
+                                                    Adoptado
+                                                </span>
                                             </label>
                                         </div>
                                     )}
                                 </div>
                             </Section>
+
                             <Section title="Imagen">
                                 {imageUrl && (
                                     <motion.div
@@ -217,36 +266,32 @@ const EditAnimal = () => {
                                         </div>
                                     </motion.div>
                                 )}
+
                                 <div className="flex flex-col items-center bg-[#F6F1FB] rounded-2xl p-6 border-2 border-dashed border-[#805BA6]">
                                     <div className="text-center">
                                         <Upload className="w-12 h-12 text-[#805BA6] mx-auto mb-3" />
-                                        <label
-                                            htmlFor="file"
-                                            className="w-50 h-10 px-3 rounded-lg cursor-pointer flex items-center justify-between bg-[#805BA6]/30 text-gray-800"
-                                        >
-                                            <span className="text-sm flex-1 text-center">
-                                                Seleccionar imagen
-                                            </span>
-                                        </label>
+
                                         <input
-                                            id="file"
-                                            type="file"
-                                            name="image"
-                                            onChange={handleChange}
-                                            className="hidden"
+                                            type="text"
+                                            value={imageUrl}
+                                            onChange={(e) => setImageUrl(e.target.value)}
+                                            placeholder="https://..."
+                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800"
                                         />
                                     </div>
                                 </div>
                             </Section>
+
                             <div className="flex gap-4 pt-6 border-t border-gray-200">
                                 <motion.a
                                     href="/admin/dashboard"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-4 rounded-xl font-semibold transition-all"
+                                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-4 rounded-xl font-semibold transition-all text-center"
                                 >
                                     Cancelar
                                 </motion.a>
+
                                 <motion.button
                                     type="submit"
                                     disabled={isSaving}
@@ -272,42 +317,48 @@ const EditAnimal = () => {
                 </motion.div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 function Section({
-  title,
-  children,
+    title,
+    children,
 }: {
-  title: string;
-  children: React.ReactNode;
+    title: string;
+    children: React.ReactNode;
 }) {
-  return (
-    <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-800 border-b-2 border-[#6A4A8A] pb-2">
-        {title}
-      </h3>
-      {children}
-    </div>
-  );
+    return (
+        <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gray-800 border-b-2 border-[#6A4A8A] pb-2">
+                {title}
+            </h3>
+
+            {children}
+        </div>
+    );
 }
 
 type InputProps = {
     label: string;
     helperText?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
+
 function Input({ label, helperText, ...props }: InputProps) {
     return (
         <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {label}
             </label>
+
             <input
                 {...props}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#805BA6] focus:border-transparent transition-all text-gray-800"
             />
+
             {helperText && (
-                <p className="text-xs text-gray-500 mt-1">{helperText}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                    {helperText}
+                </p>
             )}
         </div>
     );
@@ -316,12 +367,14 @@ function Input({ label, helperText, ...props }: InputProps) {
 type TextAreaProps = {
     label: string;
 } & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
 function TextArea({ label, ...props }: TextAreaProps) {
     return (
         <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {label}
             </label>
+
             <textarea
                 {...props}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#805BA6] focus:border-transparent transition-all text-gray-800 resize-none"
@@ -334,16 +387,19 @@ type Option = {
     value: string;
     label: string;
 };
+
 type SelectProps = {
     label: string;
     options: Option[];
 } & React.SelectHTMLAttributes<HTMLSelectElement>;
+
 function Select({ label, options, ...props }: SelectProps) {
     return (
         <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {label}
             </label>
+
             <select
                 {...props}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#805BA6] focus:border-transparent transition-all text-gray-800"
@@ -361,7 +417,7 @@ function Select({ label, options, ...props }: SelectProps) {
 export default function Page() {
     return (
         <Suspense fallback={<div>Cargando...</div>}>
-            <EditAnimal/>
+            <EditAnimal />
         </Suspense>
-    )
-};
+    );
+}
